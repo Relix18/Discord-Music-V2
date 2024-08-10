@@ -1,40 +1,42 @@
-require('dotenv').config();
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
-const fs = require('fs');
-const config = require('./config');
-const { DisTube } = require('distube');
-const { SpotifyPlugin } = require('@distube/spotify');
-const { YtDlpPlugin } = require('@distube/yt-dlp');
-const { SoundCloudPlugin } = require('@distube/soundcloud');
-const { DeezerPlugin } = require('@distube/deezer');
-const { YouTubePlugin } = require('@distube/youtube');
-const { DirectLinkPlugin } = require('@distube/direct-link');
-const path = require('path');
+require("dotenv").config();
+const { Client, GatewayIntentBits, Collection } = require("discord.js");
+const fs = require("fs");
+const config = require("./config");
+const { DisTube } = require("distube");
+const { SpotifyPlugin } = require("@distube/spotify");
+const { YtDlpPlugin } = require("@distube/yt-dlp");
+const { SoundCloudPlugin } = require("@distube/soundcloud");
+const { DeezerPlugin } = require("@distube/deezer");
+const { YouTubePlugin } = require("@distube/youtube");
+const { DirectLinkPlugin } = require("@distube/direct-link");
+const path = require("path");
 
 const client = new Client({
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildVoiceStates,
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.MessageContent,
-    ],
-  });
-  
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+});
+
 client.commands = new Collection();
 client.config = config;
 
-fs.readdirSync('./commands').forEach(file => {
-    const command = require(`./commands/${file}`);
-    client.commands.set(command.data.name, command);
+fs.readdirSync("./commands").forEach((file) => {
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.data.name, command);
 });
 
-const eventFiles = fs.readdirSync(path.join(__dirname, 'events')).filter(file => file.endsWith('.js'));
+const eventFiles = fs
+  .readdirSync(path.join(__dirname, "events"))
+  .filter((file) => file.endsWith(".js"));
 
-eventFiles.forEach(file => {
+eventFiles.forEach((file) => {
   const event = require(`./events/${file}`);
-  const eventName = file.split('.')[0];
-  
-  if (typeof event === 'function') {
+  const eventName = file.split(".")[0];
+
+  if (typeof event === "function") {
     client.on(eventName, event.bind(null, client));
   } else {
     console.error(`Event handler in ${file} is not a function.`, event);
@@ -42,34 +44,32 @@ eventFiles.forEach(file => {
 });
 
 client.distube = new DisTube(client, {
-    plugins: [
-        new YouTubePlugin(),     // Supports YouTube
-        new SpotifyPlugin(),     // Supports Spotify
-        new SoundCloudPlugin(),  // Supports SoundCloud
-        new DeezerPlugin(),      // Supports Deezer
-        new DirectLinkPlugin(),  // Supports direct audio links
-        new YtDlpPlugin(),       // Supports 700+ sites including YouTube
-    ],
+  plugins: [
+    new YouTubePlugin(), // Supports YouTube
+    new SpotifyPlugin(), // Supports Spotify
+    new SoundCloudPlugin(), // Supports SoundCloud
+    new DeezerPlugin(), // Supports Deezer
+    new DirectLinkPlugin(), // Supports direct audio links
+    new YtDlpPlugin(), // Supports 700+ sites including YouTube
+  ],
 });
 
-require('./events/distubeEvents')(client);
+require("./events/distubeEvents")(client);
 
 const express = require("express");
 const app = express();
 const port = 3000;
-app.get('/', (req, res) => {
-    const imagePath = path.join(__dirname, 'index.html');
-    res.sendFile(imagePath);
+app.get("/", (req, res) => {
+  const imagePath = path.join(__dirname, "index.html");
+  res.sendFile(imagePath);
 });
 app.listen(port, () => {
-    console.log(`🔗 Listening to GlaceYT : http://localhost:${port}`);
+  console.log(`🔗 Listening to Relix Music : http://localhost:${port}`);
 });
-
 
 client.login(process.env.TOKEN);
 
 module.exports = client;
-
 
 /*
 
