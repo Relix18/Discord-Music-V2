@@ -44,7 +44,7 @@ module.exports = async (client) => {
     body: commands,
   });
 
-  client.user.setActivity("Netflix", {
-    type: ActivityType.Watching,
+  client.user.setActivity("Music", {
+    type: ActivityType.Listening,
   });
 };
